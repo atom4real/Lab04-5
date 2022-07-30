@@ -27,7 +27,7 @@ export default {
     };
   },
   created() {
-    EventService.getEvent(this.id)
+    EventService.getEventsPassenger()
       .then((response) => {
         this.event = response.data;
       })
