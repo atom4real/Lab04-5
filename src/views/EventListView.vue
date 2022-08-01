@@ -1,36 +1,11 @@
 <template>
-  <h1>Events For Good</h1>
+  <h1>Passenger</h1>
   <div class="events">
-    <template v-for="passenger in events">
-      <EventCard
-        v-for="event in passenger.data"
-        :key="event._id"
-        :event="event"
-      ></EventCard>
-    </template>
-
-    <div class="pagination">
-      <router-link
-        id="page-prev"
-        :to="{ name: 'EventList', query: { page: page - 1 } }"
-        rel="prev"
-        v-if="page != 1"
-      >
-        Prev Page</router-link
-      >
-
-      <router-link
-        id="page-next"
-        :to="{ name: 'EventList', query: { page: page + 1 } }"
-        rel="next"
-        v-if="hasNextPage"
-      >
-        Next Page</router-link
-      >
-    </div>
-    <router-link :to="{ name: 'EventList', query: { morepage: morepage + 1 } }">
-      Add data</router-link
-    >
+    <EventCard
+      v-for="event in events[0].data"
+      :key="event._id"
+      :event="event"
+    ></EventCard>
   </div>
 </template>
 
@@ -41,45 +16,25 @@ import EventService from "@/services/EventService.js";
 import { watchEffect } from "@vue/runtime-core";
 export default {
   name: "EventListView",
-  props: {
-    page: {
-      type: Number,
-      required: true,
-    },
-    morepage: {
-      type: Number,
-      required: true,
-    },
-  },
+  props: {},
   components: {
     EventCard,
   },
   data() {
     return {
       events: null,
-      totalEvents: 0, // <--- Added this to store totalEvents
     };
   },
   created() {
     watchEffect(() => {
-      EventService.getEventsPassenger()
+      EventService.getEventsPass()
         .then((response) => {
           this.events = response.data;
-          this.totalEvents = response.headers["x-total-count"]; // <--- Store it
         })
         .catch((error) => {
           console.log(error);
         });
     });
-  },
-  computed: {
-    hasNextPage() {
-      //First, calculate total pages
-      let totalPages = Math.ceil(this.totalEvents / 2); // 2 is events per pages.
-
-      //Then check to see if the current page is less than the total pages.
-      return this.page < totalPages;
-    },
   },
 };
 </script>
@@ -89,7 +44,6 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-
 .pagination {
   display: flex;
   width: 290px;
@@ -99,11 +53,9 @@ export default {
   text-decoration: none;
   color: #2c3e50;
 }
-
 #page-prev {
   text-align: left;
 }
-
 #page-next {
   text-align: right;
 }

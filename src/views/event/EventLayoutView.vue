@@ -1,22 +1,17 @@
 <template>
-  <div v-if="event">
-    <h1>{{ event.title }}</h1>
+  <div v-if="events">
     <div id="nav">
-      <router-link :to="{ name: 'EventDetails', params: { id } }"
-        >Details</router-link
-      >
-      |
-      <router-link :to="{ name: 'EventRegister', params: { id } }"
-        >register</router-link
-      >
-      |
-      <router-link :to="{ name: 'EventEdit', params: { id } }"
-        >Edit</router-link
-      >
+      <router-link :to="{ name: 'EventDetails', params: { id } }">
+        Passenger
+      </router-link>
+      <router-link :to="{ name: 'EventRegister', params: { id } }">
+        Airline
+      </router-link>
     </div>
-    <router-view :event="event" />
+    <router-view :events="events" />
   </div>
 </template>
+
 <script>
 import EventService from "@/services/EventService.js";
 export default {
@@ -24,18 +19,34 @@ export default {
   data() {
     return {
       event: null,
+      events: null,
     };
   },
   created() {
-    EventService.getEventsPassenger()
+    EventService.getEventsPass()
       .then((response) => {
-        this.event = response.data;
+        let pass = response.data;
+        pass.forEach((element) => {
+          element.data;
+          this.event = element.data;
+        });
+        for (let index = 0; index < this.event.length; index++) {
+          if (this.event[index]._id == this.id) {
+            this.events = this.event[index];
+          }
+        }
+        if (this.events == null) {
+          this.$router.push({
+            name: "404Resource",
+            params: { resource: this.id },
+          });
+        }
       })
       .catch((error) => {
         if (error.response && error.response.status == 404) {
           this.$router.push({
             name: "404Resource",
-            params: { resource: "event" },
+            params: { resource: this.id },
           });
         } else {
           this.$router.push({ name: "NetworkError" });
