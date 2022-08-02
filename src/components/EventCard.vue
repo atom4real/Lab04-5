@@ -4,21 +4,25 @@
     :to="{ name: 'EventDetails', params: { id: event.id } }"
   >
     <div class="event-card">
-      <span>@{{ event.time }} on {{ event.date }}</span>
-      <h4>{{ event.title }}</h4>
+      <h3>ID# {{ event.id }}</h3>
+      <h3>{{ event.first_name }} {{ event.last_name }}</h3>
     </div>
   </router-link>
 </template>
 <script>
 export default {
-  name: "EventCard",
+  name: 'EventCard',
   props: {
     event: {
       type: Object,
-      required: true,
+      required: true
     },
-  },
-};
+    air: {
+      type: Object,
+      required: true
+    }
+  }
+}
 </script>
 <style scoped>
 .event-card {
